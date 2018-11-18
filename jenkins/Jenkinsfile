@@ -1,0 +1,21 @@
+pipeline {
+    agent {
+        docker {
+            image 'yiisoftware/yii2-php:7.1-apache'
+            args '-p 8001:3000'
+        }
+    }
+    stages {
+        stage('Build') {
+            steps {
+                sh './get-composer.sh'
+                sh 'php composer.phar update --dev --prefer-dist --no-interaction'
+            }
+        }
+        stage('Test') {
+            steps {
+                sh 'vendor/bin/codecept run'
+            }
+        }
+    }
+}

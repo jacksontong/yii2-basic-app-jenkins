@@ -7,3 +7,16 @@ services:
       - ./:/app:delegated
     ports:
       - '8000:80'
+
+  jenkins:
+    image: jenkinsci/blueocean
+    ports:
+    - 8080:8080
+    volumes:
+    - ./:/home/react
+    - /var/run/docker.sock:/var/run/docker.sock
+    - jenkins-data:/var/jenkins_home
+    user: root
+
+volumes:
+  jenkins-data:
