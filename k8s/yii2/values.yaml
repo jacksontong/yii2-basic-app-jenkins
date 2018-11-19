@@ -1,0 +1,83 @@
+# Default values for yii2-chart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+image:
+  registry: docker.io
+  repository: jacksontong/yii2-basic-app
+  tag: latest
+  ## Specify a imagePullPolicy
+  ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
+  ## ref: http://kubernetes.io/docs/user-guide/images/#pre-pulling-images
+  ##
+  pullPolicy: IfNotPresent
+  ## Optionally specify an array of imagePullSecrets.
+  ## Secrets must be manually created in the namespace.
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+  ##
+  # pullSecrets:
+  #   - myRegistrKeySecretName
+
+replicaCount: 1
+
+## Kubernetes configuration
+## For minikube, set this to NodePort, elsewhere use LoadBalancer or ClusterIP
+##
+serviceType: LoadBalancer
+##
+## serviceType: NodePort
+## nodePorts:
+##   http: <to set explicitly, choose port between 30000-32767>
+##   https: <to set explicitly, choose port between 30000-32767>
+nodePorts:
+  http: ""
+  https: ""
+## Enable client source IP preservation
+## ref http://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/#preserving-the-client-source-ip
+##
+serviceExternalTrafficPolicy: Cluster
+
+## Configure the ingress resource that allows you to access the
+## Wordpress installation. Set up the URL
+## ref: http://kubernetes.io/docs/user-guide/ingress/
+##
+ingress:
+  ## Set to true to enable ingress record generation
+  enabled: false
+  hosts:
+  - name: yii2.local
+
+    ## Set this to true in order to enable TLS on the ingress record
+    ## A side effect of this will be that the backend wordpress service will be connected at port 443
+    tls: false
+
+    ## Set this to true in order to add the corresponding annotations for cert-manager
+    certManager: false
+
+## Enable persistence using Persistent Volume Claims
+## ref: http://kubernetes.io/docs/user-guide/persistent-volumes/
+##
+persistence:
+  enabled: true
+  ## wordpress data Persistent Volume Storage Class
+  ## If defined, storageClassName: <storageClass>
+  ## If set to "-", storageClassName: "", which disables dynamic provisioning
+  ## If undefined (the default) or set to null, no storageClassName spec is
+  ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
+  ##   GKE, AWS & OpenStack)
+  ##
+  # storageClass: "-"
+  ##
+  ## If you want to reuse an existing claim, you can pass the name of the PVC using
+  ## the existingClaim variable
+  # existingClaim: your-claim
+  accessMode: ReadWriteOnce
+  size: 10Gi
+
+## Configure resource requests and limits
+## ref: http://kubernetes.io/docs/user-guide/compute-resources/
+##
+resources:
+  requests:
+    memory: 512Mi
+    cpu: 300m  

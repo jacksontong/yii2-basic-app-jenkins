@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "fullname" . }}
+  labels:
+    app: {{ template "fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "fullname" . }}
+      release: "{{ .Release.Name }}"
+  template:
+    metadata:
+      labels:
+        app: {{ template "fullname" . }}
+        chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+        release: "{{ .Release.Name }}"
+    spec:
+      containers:
+        - name: yii2
+          image: {{ template "yii2.image" . }}
+          imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: yii2-storage
+              mountPath: /app/runtime
+              subPath: runtime
+            - name: yii2-storage
+              mountPath: /app/web/assets
+              subPath: web/assets
+          resources:
+{{ toYaml .Values.resources | indent 10 }}
+      volumes:
+        - name: yii2-storage
+        {{- if .Values.persistence.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ .Values.persistence.existingClaim | default (include "fullname" .) }}
+        {{- else }}
+          emptyDir: {}
+        {{ end }}

@@ -1,0 +1,12 @@
+apiVersion: v1
+appVersion: "2.0.14"
+description: Yii 2 Basic Project Template is a skeleton Yii 2 application best for rapidly creating small projects.
+name: yii2-chart
+version: 0.1.0
+home: http://yiiframework.com
+sources:
+- https://github.com/yiisoft/yii2-app-basic
+maintainers:
+- name: Jackson Tong
+  email: tongtoan2704@gmail.com
+engine: gotpl
