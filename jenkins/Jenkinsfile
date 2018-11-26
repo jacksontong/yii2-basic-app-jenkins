@@ -1,18 +1,18 @@
 node {
-    env.GIT_COMMIT = sh( script: 'git rev-parse HEAD', returnStdout: true ).trim()
-    docker.build("jacksontong/yii2-basic-app:${env.GIT_COMMIT}")
-}
-pipeline {
-    agent {
-        docker {
-            image "jacksontong/yii2-basic-app:${env.GIT_COMMIT}"
-        }
+    def GIT_COMMIT = sh( script: 'git rev-parse HEAD', returnStdout: true ).trim()
+    def app
+
+    stage('Clone repository') {
+        checkout scm
     }
-    stages {
-        stage('Test') {
-            steps {
-                sh 'vendor/bin/codecept run'
-            }
+
+    stage('Build image') {
+        app = docker.build("jacksontong/yii2-basic-app")
+    }
+
+    stage('Test') {
+        app.inside {
+            sh 'vendor/bin/codecept run'
         }
     }
 }
