@@ -1,9 +1,11 @@
+node {
+    env.GIT_COMMIT = sh( script: 'git rev-parse HEAD', returnStdout: true ).trim()
+    docker.build("jacksontong/yii2-basic-app:${env.GIT_COMMIT}")
+}
 pipeline {
-    node {
-        def image = docker.build("jacksontong/yii-basic-app:latest")
-
-        image.inside {
-            sh 'php -v'
+    agent {
+        docker {
+            image "jacksontong/yii2-basic-app:${env.GIT_COMMIT}"
         }
     }
     stages {

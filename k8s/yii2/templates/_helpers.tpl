@@ -16,7 +16,7 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- end -}}
 
 {{/*
-Return the proper WordPress image name
+Return the proper Yii2 image name
 */}}
 {{- define "yii2.image" -}}
 {{- $registryName := .Values.image.registry -}}
