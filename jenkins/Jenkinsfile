@@ -9,12 +9,6 @@ pipeline {
         }
     }
     stages {
-        stage('Build') {
-            steps {
-                sh './get-composer.sh'
-                sh 'php composer.phar update --dev --prefer-dist --no-interaction'
-            }
-        }
         stage('Test') {
             steps {
                 sh 'vendor/bin/codecept run'
