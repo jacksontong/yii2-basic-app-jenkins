@@ -1,8 +1,9 @@
 pipeline {
-    agent {
-        docker {
-            image 'yiisoftware/yii2-php:7.1-apache'
-            args '-p 8001:3000'
+    node {
+        def image = docker.build("jacksontong/yii-basic-app:latest")
+
+        image.inside {
+            sh 'php -v'
         }
     }
     stages {
