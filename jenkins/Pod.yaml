@@ -1,16 +1,25 @@
+metadata:
+  labels:
+    some-label: some-label-value
 spec:
   containers:
-  - name: docker
-    image: docker:1.11
-    command: ['cat']
+  - name: jnlp
+    env:
+    - name: CONTAINER_ENV_VAR
+      value: jnlp
+  - name: maven
+    image: maven:3.3.9-jdk-8-alpine
+    command:
+    - cat
     tty: true
     env:
     - name: CONTAINER_ENV_VAR
-      value: docker
-    volumeMounts:
-    - name: dockersock
-      mountPath: /var/run/docker.sock
-  volumes:
-  - name: dockersock
-    hostPath:
-      path: /var/run/docker.sock
+      value: maven
+  - name: busybox
+    image: busybox
+    command:
+    - cat
+    tty: true
+    env:
+    - name: CONTAINER_ENV_VAR
+      value: busybox

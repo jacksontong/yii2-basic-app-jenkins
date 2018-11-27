@@ -2,17 +2,21 @@ pipeline {
   agent {
     kubernetes {
       label 'mypod'
-      yamlFile 'jenkins/Pod.yaml'
+      yamlFile 'examples/declarative_from_yaml_file/KubernetesPod.yaml'
     }
   }
   stages {
-    stage('Clone repository') {
-      checkout scm
-    }
-    stage('Build Yii2 App') {
+    stage('Run maven') {
       steps {
-        container('docker') {
-          docker.build("jacksontong/yii2-basic-app")
+        sh 'set'
+        sh "echo OUTSIDE_CONTAINER_ENV_VAR = ${CONTAINER_ENV_VAR}"
+        container('maven') {
+          sh 'echo MAVEN_CONTAINER_ENV_VAR = ${CONTAINER_ENV_VAR}'
+          sh 'mvn -version'
+        }
+        container('busybox') {
+          sh 'echo BUSYBOX_CONTAINER_ENV_VAR = ${CONTAINER_ENV_VAR}'
+          sh '/bin/busybox'
         }
       }
     }
