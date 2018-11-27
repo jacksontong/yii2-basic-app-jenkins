@@ -1,56 +1,20 @@
-
-/**
- * This pipeline will run a Docker image build
- */
-
-def label = "docker-${UUID.randomUUID().toString()}"
-
-podTemplate(label: label, yaml: """
-apiVersion: v1
-kind: Pod
-spec:
-  containers:
-  - name: docker
-    image: docker:1.11
-    command: ['cat']
-    tty: true
-    volumeMounts:
-    - name: dockersock
-      mountPath: /var/run/docker.sock
-  volumes:
-  - name: dockersock
-    hostPath:
-      path: /var/run/docker.sock
-"""
-      ) {
-    node(label) {
-
-        stage('Clone repository') {
-            checkout scm
-        }
-
-        def GIT_COMMIT = sh( script: 'git rev-parse HEAD', returnStdout: true ).trim()
-
-        stage('Build Yii2 App') {
-            container("docker") {
-                def app
-
-                stage('Build Docker image') {
-                    // sh "docker build -t jacksontong/yii2-basic-app ."
-                    app = docker.build("jacksontong/yii2-basic-app")
-                }
-
-                stage('Test') {
-                    sh "docker run --rm jacksontong/yii2-basic-app vendor/bin/codecept run"
-                }
-
-                stage('Push Docker image') {
-                    docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credential') {
-                        app.push("${GIT_COMMIT}")
-                        app.push("latest")
-                    }
-                }
-            }
-        }
+pipeline {
+  agent {
+    kubernetes {
+      label 'mypod'
+      yamlFile 'jenkins/Pod.yaml'
     }
+  }
+  stages {
+    stage('Clone repository') {
+      checkout scm
+    }
+    stage('Build Yii2 App') {
+      steps {
+        container('docker') {
+          docker.build("jacksontong/yii2-basic-app")
+        }
+      }
+    }
+  }
 }
