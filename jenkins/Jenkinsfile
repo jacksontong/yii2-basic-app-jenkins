@@ -5,28 +5,8 @@
 
 def label = "docker-${UUID.randomUUID().toString()}"
 
-podTemplate(label: label, yaml: """
-apiVersion: v1
-kind: Pod
-spec:
-  containers:
-  - name: docker
-    image: docker:1.11
-    command: ['cat']
-    tty: true
-    volumeMounts:
-    - name: dockersock
-      mountPath: /var/run/docker.sock
-  volumes:
-  - name: dockersock
-    hostPath:
-      path: /var/run/docker.sock
-"""
-    ) {
-
-
+podTemplate(label: label, yamlFile: "jenkins/Pod.yaml") {
     node(label) {
-        def app
 
         stage('Clone repository') {
             checkout scm
@@ -34,13 +14,25 @@ spec:
 
         def GIT_COMMIT = sh( script: 'git rev-parse HEAD', returnStdout: true ).trim()
 
-        stage('Build image') {
-            app = docker.build("jacksontong/yii2-basic-app")
-        }
+        stage('Build Yii2 App') {
+            container("docker") {
+                def app
 
-        stage('Test') {
-            app.inside {
-                sh 'vendor/bin/codecept run'
+                stage('Build Docker image') {
+                    // sh "docker build -t jacksontong/yii2-basic-app ."
+                    app = docker.build("jacksontong/yii2-basic-app")
+                }
+
+                stage('Test') {
+                    sh "docker run --rm jacksontong/yii2-basic-app vendor/bin/codecept run"
+                }
+
+                stage('Push Docker image') {
+                    docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credential') {
+                        app.push("${GIT_COMMIT}")
+                        app.push("latest")
+                    }
+                }
             }
         }
     }
