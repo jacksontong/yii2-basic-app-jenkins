@@ -21,6 +21,7 @@ DIRECTORY STRUCTURE
 -------------------
 
       assets/             contains assets definition
+      jenkins/            contains Jenkinsfile
       commands/           contains console commands (controllers)
       config/             contains application configurations
       controllers/        contains Web controller classes
