@@ -4,6 +4,9 @@ spec:
     image: docker:1.11
     command: ['cat']
     tty: true
+    env:
+    - name: CONTAINER_ENV_VAR
+      value: docker
     volumeMounts:
     - name: dockersock
       mountPath: /var/run/docker.sock
