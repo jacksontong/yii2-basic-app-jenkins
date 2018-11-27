@@ -1,6 +1,3 @@
-metadata:
-  labels:
-    some-label: some-label-value
 spec:
   containers:
   - name: jnlp
