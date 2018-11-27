@@ -1,10 +1,11 @@
 node {
-    def GIT_COMMIT = sh( script: 'git rev-parse HEAD', returnStdout: true ).trim()
     def app
 
     stage('Clone repository') {
         checkout scm
     }
+
+    def GIT_COMMIT = sh( script: 'git rev-parse HEAD', returnStdout: true ).trim()
 
     stage('Build image') {
         app = docker.build("jacksontong/yii2-basic-app")
