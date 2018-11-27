@@ -7,3 +7,4 @@ ADD . /app
 
 RUN ./get-composer.sh
 RUN php composer.phar update --dev --prefer-dist --no-interaction
+ADD vendor /app/vendor
