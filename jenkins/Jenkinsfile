@@ -41,13 +41,8 @@ spec:
                 }
 
                 stage('Test') {
-                    sh "docker run --rm jacksontong/yii2-basic-app vendor/bin/codecept run"
-                }
-
-                stage('Push Docker image') {
-                    docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credential') {
-                        app.push("${GIT_COMMIT}")
-                        app.push("latest")
+                    app.inside {
+                        sh 'vendor/bin/codecept run'
                     }
                 }
             }
