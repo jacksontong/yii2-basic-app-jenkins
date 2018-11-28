@@ -38,11 +38,14 @@ spec:
                 stage('Build Docker image') {
                     // sh "docker build -t jacksontong/yii2-basic-app ."
                     app = docker.build("jacksontong/yii2-basic-app")
+                     app.inside {
+                        sh 'ls -al'
+                     }
                 }
 
                 stage('Test') {
                     app.inside {
-                        sh 'vendor/bin/codecept run'
+                        sh 'ls -al'
                     }
                 }
             }
